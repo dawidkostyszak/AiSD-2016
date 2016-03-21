@@ -1,90 +1,121 @@
 #include <iostream>
-#include <vector>
-#include <algorithm>
 
 using namespace std;
 
-struct Tape {
-    unsigned long long value, amount;
+struct Node {
+    Node *left, *right;
+    unsigned long long int value = 0, amount = 0;
 };
 
-typedef vector<Tape> Heap;
-Heap heap;
+class Tree {
+public:
+    Tree() {
+        root = NULL;
+    };
 
-bool sort_func(Tape a, Tape b) {
-    return a.value < b.value;
-}
-
-long long find_max(long long p) {
-    Tape t;
-    for (long long i=p; i >= 0; i--) {
-        t = heap[i];
-        if (t.amount > 1) {
-            return i;
+    void insert(Node *node) {
+        if(root != NULL) {
+            insert(node, root);
+        } else {
+            root = node;
+            counter = 1;
         }
-    }
-    return -1;
-}
+    };
 
-long long insert_tape(Tape tape, long long pointer) {
-    unsigned long long i;
-    for (i = pointer; i < heap.size(); i++) {
-        if (heap[i].value == tape.value) {
-            heap[i].amount += tape.amount;
-            return i;
-        } else if (heap[i].value > tape.value) {
-            heap.insert(heap.begin() + i, tape);
-            return i;
-        }
-    }
+    Node *search(Node *node) {
+        Node *tmp_node = NULL;
+        if(node != NULL) {
+            if (node->amount > 1) {
+                return node;
+            }
 
-    heap.push_back(tape);
-    return i;
-}
+            if (node->right != NULL) {
+                tmp_node = search(node->right);
+            }
 
-int main() {
-    unsigned long long n, value, amount;
-    long long pointer, p , new_p;
-    Tape t, new_t;
-
-    scanf("%llu",&n);
-    pointer = n - 1;
-    for (unsigned long long i=0; i<n; i++) {
-        scanf("%llu %llu",&value, &amount);
-        t.value = value;
-        t.amount = amount;
-        heap.push_back(t);
-    }
-
-    sort(heap.begin(), heap.end(), sort_func);
-
-    while (pointer >= 0) {
-        p = find_max(pointer);
-
-        if (p >= 0) {
-            t = heap[p];
-            new_p = p;
-            while (t.amount > 1) {
-                new_t.amount = t.amount / 2;
-                new_t.value = t.value * 2;
-
-                if (t.amount % 2 == 0) {
-                    heap.erase(heap.begin() + new_p);
-                    if (new_p > 0) {
-                        new_p--;
-                    }
-                } else {
-                    heap[p].amount = 1;
-                }
-
-                new_p = insert_tape(new_t, new_p);
-                t = heap[new_p];
+            if (tmp_node != NULL) {
+                return tmp_node;
+            } else if (node->left != NULL) {
+                tmp_node = search(node->left);
             }
         }
-        pointer = p - 1;
+
+        return tmp_node;
+    };
+
+    void solve() {
+        solve(root);
+    };
+
+    Node *root;
+    unsigned long long int counter = 0;
+
+private:
+    void insert(Node *node, Node *leaf) {
+        if(node->value < leaf->value) {
+            if(leaf->left != NULL) {
+                return insert(node, leaf->left);
+            } else {
+                leaf->left = node;
+                counter++;
+            }
+        } else if(node->value > leaf->value) {
+            if(leaf->right != NULL) {
+                return insert(node, leaf->right);
+            } else {
+                leaf->right = node;
+                counter++;
+            }
+        } else {
+            if (leaf->amount == 0) {
+                counter++;
+            }
+            leaf->amount += node->amount;
+        }
+    };
+
+    void solve(Node *node) {
+        if (node->left != NULL) {
+            solve(node->left);
+        }
+        if (node->amount > 1) {
+            solveNode(node);
+        }
+        if (node->right != NULL) {
+            solve(node->right);
+        }
     }
 
-    printf("%lu", heap.size());
+    void solveNode(Node *node) {
+        Node *tmp_node = new Node();
+        tmp_node->value = node->value * 2;
+        tmp_node->amount = node->amount / 2;
+        insert(tmp_node);
 
+        if (node->amount % 2 == 0) {
+            node->amount = 0;
+            counter--;
+        } else {
+            node->amount = 1;
+        }
+    }
+};
+
+int main() {
+    unsigned long long int n, value, amount;
+    Tree tree;
+
+    scanf("%llu",&n);
+    for (unsigned long long int i=0; i<n; i++) {
+        Node *node = new Node();
+        scanf("%llu %llu",&value, &amount);
+        node->value = value;
+        node->amount = amount;
+        tree.insert(node);
+    }
+
+    tree.solve();
+
+    printf("%llu\n", tree.counter);
     return 0;
 }
