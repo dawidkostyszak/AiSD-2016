@@ -3,7 +3,7 @@
 using namespace std;
 
 struct Node {
-    Node *left, *right, *parent;
+    Node *left = NULL, *right = NULL, *parent = NULL;
     unsigned long long value = 0, amount = 0;
 };
 
@@ -74,13 +74,15 @@ private:
             delete_node(node);
         }
 
-        node = insert(tmp_node);
+        if (tmp_node->amount > 0) {
+            node = insert(tmp_node);
 
-        if (node->amount > 1) {
-            solveNode(node);
-        } else {
-            counter++;
-            delete_node(node);
+            if (node->amount > 1) {
+                solveNode(node);
+            } else {
+                counter++;
+                delete_node(node);
+            }
         }
     }
 
