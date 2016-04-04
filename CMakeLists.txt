@@ -7,6 +7,6 @@ set(BUILD_1 sznurki)
 set(SOURCE_FILES Pracownia_A/sznurki.cpp)
 add_executable(${BUILD_1} ${SOURCE_FILES})
 
-#set(BUILD_2 main_2)
-#set(SOURCE_FILES_2 main_2.cc) //where main_2.cc is your second main/program
-#add_executable(${BUILD_2} ${SOURCE_FILES_2})
+set(BUILD_2 skoczek)
+set(SOURCE_FILES_2 Pracownia_B/skoczek.cpp)
+add_executable(${BUILD_2} ${SOURCE_FILES_2})
