@@ -10,3 +10,7 @@ add_executable(${BUILD_1} ${SOURCE_FILES})
 set(BUILD_2 skoczek)
 set(SOURCE_FILES_2 Pracownia_B/skoczek.cpp)
 add_executable(${BUILD_2} ${SOURCE_FILES_2})
+
+set(BUILD_3 trojkaty)
+set(SOURCE_FILES_3 Pracownia_C/trojkaty.cpp)
+add_executable(${BUILD_3} ${SOURCE_FILES_3})
